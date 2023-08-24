@@ -1,0 +1,330 @@
+Mysql tutorial Seyi
+
+__________QUERY SINTAX/ STATEMENT__________
+- USE (to use a specific database. e.g USE sql_store: this will use the sql_store database)
+
+- SELECT (this select the specific column, e.g "SELECT customer's id" this will only select the customer's id column
+	from the table. To select all columns we use "SELECT *".
+
+every query command should end with semi column. ";"
+
+- FROM (this indicate the table we are selecting from)
+- WHERE (This is to indicate where and what we want to see from the table selected e.g [WHERE customer_id = 1)
+- ORDER BY (this is used for sorting the arrangment of the table e.g [ORDER BY first_name]
+- -- double hiphen is for statement in sql. so the command will not be executed..
+
+
+the order of arrangement of a sql query is [SELECT, FROM, WHERE, ORDER] to avoid sintax error
+
+________________SELECT_________________
+
+To select all columns in the database table, we use [SELECT *]
+To select specific columns in the database table, we specify [SELECT first_name, last_name, points]
+
+AS - this is use to save an operation by creating it as another column eg, [(points + 100) * 10 AS 'discount factor'].
+	in this case, a new column variable as been created as "discount factor"
+
+DISTINCT - this is used to generate the distinct values in a column. it will exclude the duplicate and give out the unique values.
+		e.g [SELECT DISTINCT state]
+
+__________________WHERE_______________
+The where clause works more like loc in python, it where to locate a particular dataset we want.
+eg; [WHERE point > 1000] this means that in our point column we want it to display where the point is greater than 1000.
+
+___________________The AND, OR and NOT operator ________________________________
+
+____AND____
+The is used when we want to compare two values together 
+eg; [WHERE birth_date > '1990-01-01' AND points > 1000 ]
+___OR____
+this is use when at least one condition is satisfied.
+eg; [WHERE birth_date > '1990-01-01' OR points > 1000 ] 
+NOTE; we can also combine the AND and OR operators together to sort out the data
+
+_________NOT___________
+this is used to negate the query request, it is also an inverse..
+e.g. [SELECT * FROM customers WHERE NOT (birth_date <= '1990-01-01' AND points > 1000)] 
+the above will provide a table where the birth_date is greater than 1990 and the points is below 1000 
+
+___________IN _____________________
+
+we use use this when we have expressions like this 
+[WHERE state='VR' OR state= 'GR' OR state= 'TX']
+we use this instead
+[WHERE state IN ('VR', 'FL', 'GA')]
+[WHERE state NOT IN ('VR', 'FL', 'GA')] to get the inverse
+
+__________________ BETWEEN_____________________
+This is used in the case of ranges
+for example, if we have expression like this 
+[WHERE (points >= 1000) AND (point <= 3000)]
+we can rewrite it like this
+[WHERE points BETWEEN 1000 AND 3000]
+
+__________________LIKE_____________________
+This is to find a data with a particular string
+let use the example to find last name that start with 'B"
+[WHERE last_name LIKE 'b%'] b as first
+[WHERE last_name LIKE '%b%'] b can be anywhere
+[WHERE last_name LIKE '%b'] b as last
+
+_____________________REGEXP_______________________
+This means regular expression
+this also use similarly as the LIKE but more power for getting strings 
+you dont need to use the percentage sign.
+eg
+[WHERE lastname REGEXP '^field'] field as the begining
+[WHERE lastname REGEXP 'field$'] field as the end
+[WHERE lastname REGEXP 'field'] field as anywhere
+[WHERE lastname REGEXP 'field|mac'] field or Mac in the last name
+[WHERE lastname REGEXP 'field|mac|rose'] field,Mac or rose in the last name
+[WHERE lastname REGEXP '[abc]e']
+[WHERE lastname REGEXP '[a-h]'] 
+
+
+______________________NULL____________________________
+The is used to sort data with missing datas
+eg. [WHERE phone IS NULL] this will find the data that has a missing value in the phone column
+
+
+_________________ORDER BY_____________________________
+This is used for sorting the data arrangement
+eg.
+[SELECT *
+FROM customers
+ORDER BY column_name DESC] DESC means decending order
+
+
+
+______________LIMIT__________________________________
+this is used to set the limit of the number of data we want to see. It works like Head
+EG.
+SELECT *
+FROM dataset_name
+LIMIT 300 {This will only give out first 300 rolls of the dataset.}
+/////////////////////// OFFSET METHOD
+e.g:
+SELECT *
+FROM dataset_name
+LIMIT 6, 3 {this will skip the first 6 roll, and pick the next available 3 rolls}
+
+USE sql_store;
+-- geting the top 3 most loyal customers by their points
+SELECT *
+FROM  customers
+ORDER BY Points DESC
+LIMIT 3
+
+
+___________________________ INNER JOINS _________________________________
+This is used to combine datasets together by their similar column column values
+e.g
+SELECT *
+FROM first_dataset
+JOIN second_dataset ON first_dataset.column_name = second_dataset.column_name
+
+
+________________________JOINING ACROSS DATABASE_______________________________
+this is when we join tables across multiple database 
+e.g
+
+USE database_1;
+SELECT *
+FROM dataset1 df1
+JOIN database_2.dataset2 df2 ON df1.column_name = df2.column_name
+
+
+______________________SELF JOIN_______________________________________
+This is use to join or compare or derive more column in a dataset....
+e.g
+USE sql_hr;
+
+SELECT *
+FROM dataset e
+JOIN dataset m ON e.column1 = m.column_2
+
+
+______________________COMPOUND JOIN CONDITION______________________________
+joining columns by condition. i.e. joining two similar column from two datasets(table)
+e.g by using the AND condition
+SELECT *
+FROM first_dataset fdf
+JOIN second_dataset sdf
+	ON fdf.column1 = sdf.column1
+	AND fdf.column2 = sdf.column2
+
+
+______________________IMPLICIT JOIN SYNTAX _________________________________________
+example instead of our regular inner join sintax,  we can use the where condition
+e.g
+SELECT *
+FROM dataset1 df1
+JOIN dataset2 df2
+	ON df1.column = df2.column
+[This can be rewritten as ]
+SELECT *
+FROM dataset1 df1, dataset2 df2
+WHERE df1.column = df2.column
+
+
+
+
+________________________OUTER JOIN ____________________________________________
+types of outer joins are LEFT JOIN and RIGHT JOIN
+LEFT JOIN; all the records from the left table are returned weather the condition is true or not  
+e.g 
+SELECT *
+FROM table1 t1
+LEFT JOIN table2 t2
+	ON t1.column = t2.column
+
+
+___________________OUTER JOIN BETWEEN MULTIPLE TABLE _______________________
+This will include the values with th null in it. 
+example
+SELECT *
+FROM table1 t1
+LEFT JOIN table2 t2
+	ON t1.column1 = t2.column2
+LEFT JOIN table3 t3
+	ON t2.column2 =  t3.column2
+ORDER BY t1.column1
+
+
+_____________________________SELF OUTER JOIN ________________________
+joining the column in relationship within the same table
+i.e if a table has an id_number and the name of the owner of the id_number scattered around, 
+
+example
+USE database;
+
+SELECT 
+	e.employee_id,
+	e.first_name,
+	m.first_name AS manager
+FROM employee e
+JOIN employee m
+	ON e.report_to = m.employee_id
+(in the this case, we duplicated the table in to two named as e, m)
+
+
+
+_______________________________USING__________________________
+this makes our code shorter.
+instead of using [ON t1.column = t2.column]
+we can use this instead.
+[USING (column)]
+exmple
+SELECT *
+FROM table1 t1
+LEFT JOIN table2 t2
+	USING (column1)
+LEFT JOIN table3 t3
+	USING (column2)
+Note: we cannot use this if the coulmn that are related no not named the same way. {if the column name is different)
+
+
+________________________NATURAL JOIN______________________
+in this, we dont necessarily need to specify column name.it joins two table based on their common columns
+i.e, the column with the same name.
+
+_____________________CROSS JOIN __________________________
+It combines all the content of two tables together
+
+example> using implicit code syntax
+SELECT *
+FROM table1 t1, table2 t2
+ORDER BY t1.column
+
+example> using explicit code syntax
+SELECT *
+FROM table1 t1
+CROSS JOIN table2 t2
+ORDER BY t1.column
+
+
+___________________ UNION________________________________
+We can combine rolls in SQL using the union 
+
+Example
+SELECT order_id, order_date, 'Active' AS status
+FROM orders
+WHERE order_date >= '2019-02-14'
+UNION
+SELECT order_id, order_date, 'Archived' AS status
+FROM orders
+WHERE order_date < '2019-02-14'
+
+{This above code will create a new categorical column in the orders dataset called "status",
+and the categories will be "Active, Archived", but using the order_date as 
+the condition}
+aNOTHR examle--------------------------
+SELECT customer_id, first_name, points, 'Bronze' AS type
+FROM customers
+WHERE points <= 2000
+UNION
+SELECT customer_id, first_name, points, 'Silver' AS type
+FROM customers
+WHERE points > 2000 AND points <= 3000
+UNION
+SELECT customer_id, first_name, points, 'Gold' AS type
+FROM customers
+WHERE points > 3000 
+
+
+
+________________________ COLUMN ATTRIBUTES___________________________
+How to insert, update and delete data...
+to check the common attributes of a column
+*INT(11) - this measns that a column can only accept integers characters and the maximum of 11 numbers
+*VARCHAR(50) - this measns that a column can only accept variable values of 50, the also means that it could be less than 50 without having issues with the code.
+*CHAR(50) - this measns that a column can only accept variable values of 50, and it must be 50 hence SQL will replace it space to fill it up.
+*PK - primary key -  used for unique identification
+*NN - not null - this determines if the column can accept null values or not
+*AI - auto increment - often used with primary key column - the primary column can increase if we add new values\
+* Default/Expression - if a value is not supplied in a column, it will assign a default value to it, usually null
+
+
+
+______________________INSERTING A ROW TO A DATASET/TABLE ___________________
+_________________INSERT INTO________________
+EXAMPLE> 
+{
+INSERT INTO table (index, column1_name,column2_lastname, column3_birthdate )
+VALUES (DEFAULT, 'John', 'Smith', '1990-03-12'}
+
+
+__________________INSERTING MULTIPLE ROW IN A TABLE __________________________
+EXAMPLE
+INSERT INTO shippers (name)
+VALUES ('shipper1'),
+	('shipper2'), 
+	('shipper3')
+
+___________________INSERTING HIERARCHICAL ROWS______________________________
+this is used when we have multiply table with a similar column and we want to add a new roll with will also affect the other tables
+Exmaple
+INSERT INTO oders (customer_id, order_date, status)
+VALUES (1, '2019-01-02', 1);
+
+INSERT INTO order_items
+VALUES
+	(LAST_INSERT_ID(), 1, 2.95)
+	(LAST_INSERT_ID(), 1, 3.95)
+
+
+_____________________ CREATING A COPY OF A TABLE ____________________________
+EX1
+CREATE TABLE new_table AS 
+SELECT *
+FROM old_table
+
+this above code will create a new table using all the values in the old table, 
+we can also truncate it to make the new table empty
+
+if we just wan to select few data from the old table to create a new one, we use insert from
+EX2
+INSERT INTO new_table
+SELECT *
+FROM old_table
+WHERE order_date > '2019-01-02'
